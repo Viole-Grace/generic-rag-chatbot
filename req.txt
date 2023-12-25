@@ -22,3 +22,6 @@ langchain-google-genai
 #basic document reading libraries
 pdfplumber
 python-docx
+
+#UI
+streamlit
