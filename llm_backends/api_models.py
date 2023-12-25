@@ -19,7 +19,6 @@ class BaseModel:
                                 why instead of answering something not correct. If you don't know the answer 
                                 to a question, please don't share false information.
 
-                                The context of the text is taken from a market research transcript for understanding opinions about fresh vs chilled vs frozen meat.
                                 Your goal is to provide helpful and concise answers."""
         self.user_prompt = "query : {}\n"
 
