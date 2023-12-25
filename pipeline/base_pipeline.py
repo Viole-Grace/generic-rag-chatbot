@@ -9,16 +9,20 @@ import pandas as pd
 
 from utils.parsers import DocxParser, PDFParser
 from retrieval.semantic_retrieval import SemanticRetrieval, InstructRetrieval
-from llm_backends.api_models import GeminiLLM
+from llm_backends.api_models import GeminiLLM, GPTLLM
 
 class DocumentProcessor:
 
-    def __init__(self):
+    def __init__(self,
+                 embedding_model=None):
 
         self.basic_document_store = None
         self.embedding_store = None
 
-        self.embedding_model = None
+        self.embedding_model = embedding_model
+
+        if embedding_model is None:
+            self.embedding_model = SemanticRetrieval()
 
         self.chunking_strategy = None
 
@@ -97,44 +101,13 @@ class DocumentProcessor:
         
         chunked_embeddings = {}
 
-        embedding_model = InstructRetrieval()
-        # embedding_model = SemanticRetrieval()
-
-        # single_chunk_docs = [doc for doc in chunked_documents
-        #                      if doc["type"] == "single"]
-        # multi_chunk_docs = [doc for doc in chunked_documents
-        #                     if doc["type"] == "multi_chunk"]
-        
-        # if len(single_chunk_docs) > 0:
-        #     chunked_embeddings = embedding_model.embed_documents([doc["doc"] for doc in single_chunk_docs])
-        #     chunked_embeddings = {single_chunk_docs[idx]["id"] : chunked_embeddings[idx]
-        #                         for idx in range(len(single_chunk_docs))}
-
-        # for mc_doc in multi_chunk_docs:
-
-            # split_doc = mc_doc["doc"].split()
-            # max_chunks = len(split_doc)//400
-            # max_chunks += 1
-
-            # chopped_up = [split_doc[idx*400 : (idx+1)*400]
-            #                 for idx in range(max_chunks)]
-            # chopped_up = [" ".join(_).strip() for _ in chopped_up]
-
-            # print('chopped up doc : ',chopped_up)
-
-            # chopped_up_emb = embedding_model.embed_documents(documents=split_doc)
-            # mc_doc_emb = np.mean(chopped_up_emb, axis=0)
-
-            # chunked_embeddings.update({mc_doc["id"] : mc_doc_emb})
-
-        chunked_embeddings = embedding_model.embed_corpus([doc["doc"] for doc in chunked_documents])
+        chunked_embeddings = self.embedding_model.embed_corpus([doc["doc"] for doc in chunked_documents])
         self.embedding_store = {chunked_documents[idx]["id"] : chunked_embeddings[idx]
                               for idx in range(len(chunked_documents))}
         self.embedding_store = [{"id" : corpus_id, "embedding" : embedding}
                                 for corpus_id, embedding in self.embedding_store.items()]
 
         self.basic_document_store = chunked_documents
-        self.embedding_model = embedding_model
 
         return chunked_embeddings
 
@@ -142,10 +115,13 @@ class DocumentQALLM:
 
     def __init__(self,
                  document_processor,
-                 llm_backend=GeminiLLM()):
+                 llm_backend=None):
         
         self.document_processor = document_processor
         self.llm = llm_backend
+
+        if llm_backend is None:
+            self.llm = GeminiLLM()
 
         self.document_store = document_processor.basic_document_store
         self.embedding_store = document_processor.embedding_store
