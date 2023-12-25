@@ -1,0 +1,11 @@
+Datasets/
+Outputs/
+
+venv/
+
+__pycache__
+
+*.ipynb
+
+.env
+.DS_Store
