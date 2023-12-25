@@ -94,10 +94,11 @@ class DocumentProcessor:
 
     def embed_documents(self,
                         chunked_documents):
-
-        # embedding_model = InstructRetrieval()
-        embedding_model = SemanticRetrieval()
+        
         chunked_embeddings = {}
+
+        embedding_model = InstructRetrieval()
+        # embedding_model = SemanticRetrieval()
 
         # single_chunk_docs = [doc for doc in chunked_documents
         #                      if doc["type"] == "single"]
