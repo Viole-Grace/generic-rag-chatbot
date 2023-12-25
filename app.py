@@ -42,7 +42,7 @@ if uploaded_files:
 
     #process and chunk the documents
     parsed_documents = preprocessor.parse_documents(document_paths=uploaded_file_names)
-    chunked_documents = preprocessor.chunk_documents(parsed_documents=parsed_documents, by_line=True)
+    chunked_documents = preprocessor.chunk_documents(parsed_documents=parsed_documents, by_line=False)
     embeddings = preprocessor.embed_documents(chunked_documents=chunked_documents)
 
     #define a mini rag

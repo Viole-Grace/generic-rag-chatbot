@@ -29,7 +29,7 @@ class BaseSemanticRetrieval:
 
         relevant_docs = semantic_search(query_embeddings=query_emb,
                                         corpus_embeddings=document_embeddings,
-                                        top_k=20)[0]
+                                        top_k=10)[0]
         
         return relevant_docs
     
