@@ -48,6 +48,8 @@ if uploaded_files:
     #define a mini rag
     rag = DocumentQALLM(document_processor=preprocessor)
 
+    st.write('Files processed successfully!')
+
     user_input = st.text_input('query here:')
     if st.button('Ask your documents'):
         if user_input == '':
